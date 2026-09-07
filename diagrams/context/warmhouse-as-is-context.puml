@@ -1,0 +1,19 @@
+@startuml
+!include ../templates/C4_Context.puml
+
+title As-Is Warmhouse Context Diagram
+
+top to bottom direction
+
+!includeurl https://raw.githubusercontent.com/RicardoNiepel/C4-PlantUML/master/C4_Component.puml
+
+Person(user, "User", "A user of the warmhouse system")
+System(warmhouseSystem, "Warmhouse System", "Allows users to track temperature and enable/disable heating")
+
+System_Ext(heating, "Heating System API", "External API for heating control")
+
+Rel(user, warmhouseSystem, "Views temperature values and controls heating")
+Rel(heating, warmhouseSystem, "Registers new heating devices")
+Rel(warmhouseSystem, heating, "Obtains temperature values and turns heating on/off")
+
+@enduml
