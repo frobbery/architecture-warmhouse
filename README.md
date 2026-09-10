@@ -43,19 +43,27 @@
 
 # Задание 2. Проектирование микросервисной архитектуры
 
-В этом задании вам нужно предоставить только диаграммы в модели C4. Мы не просим вас отдельно описывать получившиеся микросервисы и то, как вы определили взаимодействия между компонентами To-Be системы. Если вы правильно подготовите диаграммы C4, они и так это покажут.
-
 **Диаграмма контейнеров (Containers)**
 
-Добавьте диаграмму.
+![To-be сontainer diagram](diagrams/container/warmhouse-to-be-container.png)
 
 **Диаграмма компонентов (Components)**
 
-Добавьте диаграмму для каждого из выделенных микросервисов.
+![WebApp component diagram](diagrams/component/webapp-component.png)
+
+![UserService component diagram](diagrams/component/user-service-component.png)
+
+![DeviceService component diagram](diagrams/component/device-service-component.png)
+
+![ScryptService component diagram](diagrams/component/scrypt-service-component.png)
+
+![CameraService component diagram](diagrams/component/camera-service-component.png)
+
+![TelemetryService component diagram](diagrams/component/telemetry-service-component.png)
 
 **Диаграмма кода (Code)**
 
-Добавьте одну диаграмму или несколько.
+![ScryptExecutorService code diagram](diagrams/code/scrypt-service-executor-code.png)
 
 # Задание 3. Разработка ER-диаграммы
 

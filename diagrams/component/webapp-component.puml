@@ -1,0 +1,41 @@
+@startuml
+title Warmhouse Web Application Component Diagram
+
+top to bottom direction
+
+!include ../templates/C4_Component.puml
+
+Container_Boundary(WarmhouseSystem, "Warmhouse System") {
+  Container(WebApp, "Web Application", "Java, Spring", "Handles mobile app calls")
+  Component(UserService, "UserService", "Java, Spring", "Microservice for registering and authenticating users")
+  Component(DeviceService, "DeviceService", "Java, Spring", "Microservice for creating and storing devices")
+  Component(TelemetryService, "TelemetryService", "Java, Spring", "Microservice for viewing telemetry from devices")
+  Component(ScryptService, "ScryptService", "Java, Spring", "Microservice for action calls and creating scripts for devices")
+  Component(CameraService, "CameraService", "Java, Spring", "Microservice for getting videos from cameras")
+}
+
+Container(WebApp, "Web Application", "Java, Spring") {
+  Component(AuthController, "AuthController", "Component: Spring MVC Rest Controller", "Handles authentication and authorization requests")
+  Component(UserServiceClient, "UserServiceClient", "Component: Spring Bean", "Acts as facade for REST API calls for UserService")
+  Component(DeviceController, "DeviceController", "Component: Spring MVC Rest Controller", "Handles device registration and device requests")
+  Component(DeviceServiceClient, "DeviceServiceClient", "Component: Spring Bean", "Acts as facade for REST API calls for DeviceService")
+  Component(TelemetryController, "TelemetryController", "Component: Spring MVC Rest Controller", "Handles telemetry data requests and schedule telemetry requests")
+  Component(TelemetryServiceClient, "TelemetryServiceClient", "Component: Spring Bean", "Acts as facade for REST API calls for TelemetryService")
+  Component(ScryptController, "ScryptController", "Component: Spring MVC Rest Controller", "Handles device actions calls and script creating requests")
+  Component(ScryptServiceClient, "ScryptServiceClient", "Component: Spring Bean", "Acts as facade for REST API calls for ScryptService")
+  Component(CameraController, "CameraController", "Component: Spring MVC Rest Controller", "Handles camera video requests")
+  Component(CameraServiceClient, "CameraServiceClient", "Component: Spring Bean",  "Acts as facade for REST API calls for CameraService")
+}
+
+Rel(AuthController,UserServiceClient,"Forwards requests")
+Rel(UserServiceClient,UserService,"Calls REST API", "JSON/HTTPS")
+Rel(DeviceController,DeviceServiceClient,"Forwards requests")
+Rel(DeviceServiceClient,DeviceService,"Calls REST API", "JSON/HTTPS")
+Rel(TelemetryController,TelemetryServiceClient,"Forwards requests")
+Rel(TelemetryServiceClient,TelemetryService,"Calls REST API", "JSON/HTTPS")
+Rel(ScryptController,ScryptServiceClient,"Forwards requests")
+Rel(ScryptServiceClient,ScryptService,"Calls REST API", "JSON/HTTPS")
+Rel(CameraController,CameraServiceClient,"Forwards requests")
+Rel(CameraServiceClient,CameraService,"Calls REST API", "JSON/HTTPS")
+
+@enduml

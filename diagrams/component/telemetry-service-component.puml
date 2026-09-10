@@ -1,0 +1,37 @@
+@startuml
+title Warmhouse Web Application Component Diagram
+
+top to bottom direction
+
+!include ../templates/C4_Component.puml
+
+Container_Boundary(WarmhouseSystem, "Warmhouse System") {
+  Container(TelemetryService, "Telemetry Service", "Java, Spring", "Handles viewing telemetry, scheduling telemetry measurings and measuring telemetry in real time")
+  ContainerDb(TelemetryDatabase, "Telemetry Database", "PostgreSQL", "Stores telemetry data")
+  Container(Kafka, "Kafka", "Message Broker", "Buffers and distributes telemetry events")
+}
+
+Container(TelemetryService, "Telemetry Service", "Java, Spring") {
+  Component(TelemetryController, "TelemetryController", "Component: Spring MVC Rest Controller", "Handles requests for telemetry history")
+  Component(TelemetryServiceLayer, "TelemetryService", "Component: Spring Bean", "Provides functionality for saving and viewing telemetry")
+  Component(MeasuringController, "MeasuringController", "Component: Spring MVC Rest Controller", "Handles requests for measuring telemetry in real time and scheduling measuring on specific devices")
+  Component(TelemetryConsumer, "TelemetryConsumer", "Component: Spring Kafka Listener", "Reads and processes telemetry events from Kafka")
+  Component(MeasuringService, "MeasuringService", "Component: Spring Bean", "Provides functionality for measuring and scheduling telemetry measurings")
+  Component(TelemetryRepository, "TelemetryRepository", "Component: Spring Repository", "Data access logic")
+  Component(DeviceFacade, "DeviceFacade", "Component: Spring Bean", "A facade onto device API")
+}
+
+System_Ext(deviceApi, "Device API", "External API for devices")
+
+Rel(TelemetryController,TelemetryServiceLayer,"Fetches telemetry history")
+Rel(deviceApi, Kafka, "Publishes telemetry data to", "JSON")
+Rel(TelemetryConsumer, Kafka, "Reads telemetry data from", "JSON")
+Rel(TelemetryConsumer, TelemetryServiceLayer, "Saves telemetry data")
+Rel(TelemetryServiceLayer,TelemetryRepository,"Saves and fetches telemetry data")
+Rel(TelemetryRepository, TelemetryDatabase, "Reads/Writes data", "SQL/TCP")
+Rel(MeasuringController,MeasuringService,"Measures telemetry in real time and schedules telemetry measurings")
+Rel(MeasuringService,TelemetryServiceLayer,"Saves freshly read telemetry")
+Rel(MeasuringService,DeviceFacade,"Measures telemetry in real time and schedules telemetry measurings")
+Rel(DeviceFacade,deviceApi,"Calls REST API", "JSON/HTTPS")
+
+@enduml
