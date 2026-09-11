@@ -5,8 +5,6 @@ title As-Is Warmhouse Context Diagram
 
 top to bottom direction
 
-!include ../templates/C4_Context.puml
-
 Person(user, "User", "A user of the warmhouse system")
 System(warmhouseSystem, "Warmhouse System", "Allows users to track temperature and enable/disable heating")
 

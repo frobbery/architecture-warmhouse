@@ -1,0 +1,11 @@
+@startuml
+
+entity "Device" {
+  * device_id : NUMBER
+  --
+  user_id : NUMBER
+  dtype : VARCHAR
+  name : VARCHAR
+}
+
+@enduml

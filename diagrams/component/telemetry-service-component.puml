@@ -14,9 +14,9 @@ Container_Boundary(WarmhouseSystem, "Warmhouse System") {
 Container(TelemetryService, "Telemetry Service", "Java, Spring") {
   Component(TelemetryController, "TelemetryController", "Component: Spring MVC Rest Controller", "Handles requests for telemetry history")
   Component(TelemetryServiceLayer, "TelemetryService", "Component: Spring Bean", "Provides functionality for saving and viewing telemetry")
-  Component(MeasuringController, "MeasuringController", "Component: Spring MVC Rest Controller", "Handles requests for measuring telemetry in real time and scheduling measuring on specific devices")
+  Component(MeasuringController, "MeasuringController", "Component: Spring MVC Rest Controller", "Handles requests for measuring telemetry in real time and scheduling/unscheduling measuring on specific devices")
   Component(TelemetryConsumer, "TelemetryConsumer", "Component: Spring Kafka Listener", "Reads and processes telemetry events from Kafka")
-  Component(MeasuringService, "MeasuringService", "Component: Spring Bean", "Provides functionality for measuring and scheduling telemetry measurings")
+  Component(MeasuringService, "MeasuringService", "Component: Spring Bean", "Provides functionality for measuring and scheduling/unscheduling telemetry measurings")
   Component(TelemetryRepository, "TelemetryRepository", "Component: Spring Repository", "Data access logic")
   Component(DeviceFacade, "DeviceFacade", "Component: Spring Bean", "A facade onto device API")
 }
