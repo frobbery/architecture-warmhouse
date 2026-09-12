@@ -88,7 +88,19 @@
 
 ### 2. Документация API
 
-Здесь приложите ссылки на документацию API для микросервисов, которые вы спроектировали в первой части проектной работы. Для документирования используйте Swagger/OpenAPI или AsyncAPI.
+[АПИ бэкенда для мобильного приложения](openapi/webapp-api.yaml)
+
+[АПИ user-service](openapi/user-service-api.yaml)
+
+[АПИ device-service](openapi/device-service-api.yaml)
+
+[АПИ telemetry-service](openapi/telemetry-service-api.yaml)
+
+[Асинхронное АПИ telemetry-service](openapi/telemetry-service-async-api.yaml)
+
+[АПИ scrypt-service](openapi/scrypt-service-api.yaml)
+
+[АПИ camera-service](openapi/camera-service-api.yaml)
 
 # Задание 5. Работа с docker и docker-compose
 

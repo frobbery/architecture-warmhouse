@@ -1,0 +1,139 @@
+openapi: 3.0.3
+info:
+  title: telemetry-service
+  description: telemetry-service endpoints
+  version: 1.0.0
+
+paths:
+  /telemetry/{deviceId}:
+    get:
+      summary: Get telemetry history of device
+      description: If period not specified returns telemetry for last three days
+      parameters:
+        - in: path
+          name: deviceId
+          schema:
+            type: number
+          required: true
+        - in: query
+          name: from
+          schema:
+            type: string
+            format: dd-MM-yyyy
+          required: false
+        - in: query
+          name: to
+          schema:
+            type: string
+            format: dd-MM-yyyy
+          required: false
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TelemetryResponse'
+        '400':
+          description: Invalid request
+          content:
+            application/text:
+              schema:
+                type: string
+                description: Error message
+  /telemetry/{deviceId}/real-time:
+    post:
+      summary: Gets real time telemetry result
+      parameters:
+        - in: path
+          name: deviceId
+          schema:
+            type: number
+          required: true
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TelemetryDto'
+        '400':
+          description: Invalid request
+          content:
+            application/text:
+              schema:
+                type: string
+                description: Error message
+        '503':
+          description: Device doesn't respond
+          content:
+            application/text:
+              schema:
+                type: string
+                description: Error message
+  /telemetry/{deviceId}/schedule:
+    post:
+      summary: Add schedule for telemetry measurings on device
+      parameters:
+        - in: path
+          name: deviceId
+          schema:
+            type: number
+          required: true
+        - in: path
+          name: cronExpression
+          schema:
+            type: string
+          required: true
+      responses:
+        '200':
+          description: Successful operation
+        '400':
+          description: Invalid request
+          content:
+            application/text:
+              schema:
+                type: string
+                description: Error message
+        '405':
+          description: Schedule for this device already exists
+          content:
+            application/text:
+              schema:
+                type: string
+                description: Error message
+    delete:
+      summary: Deletes schedule for telemetry measuring on device
+      parameters:
+        - in: path
+          name: deviceId
+          schema:
+            type: number
+          required: true
+      responses:
+        '200':
+          description: Successful operation
+        '400':
+          description: Invalid request
+          content:
+            application/text:
+              schema:
+                type: string
+                description: Error message
+components:
+  schemas:
+    TelemetryResponse:
+      type: array
+      items:
+        $ref: '#/components/schemas/TelemetryDto'
+
+    TelemetryDto:
+      type: object
+      properties:
+        value:
+          type: number
+        unit:
+          type: string
+        measuredAt:
+          type: string
+          format: dd-MM-yyyy

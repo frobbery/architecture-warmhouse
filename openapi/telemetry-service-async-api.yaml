@@ -1,0 +1,45 @@
+asyncapi: 3.0.0
+info:
+  title: Telemetry Service
+  version: 1.0.0
+  description: Consumes device telemetry measurements from Kafka.
+
+channels:
+  deviceTelemetry:
+    address: telemetry.device.measurements
+    messages:
+      deviceTelemetryMessage:
+        $ref: '#/components/messages/DeviceTelemetryMessage'
+
+operations:
+  receiveDeviceTelemetry:
+    action: receive
+    channel:
+      $ref: '#/channels/deviceTelemetry'
+    summary: Receive device telemetry measurements from Kafka
+    messages:
+      - $ref: '#/channels/deviceTelemetry/messages/deviceTelemetryMessage'
+
+components:
+  messages:
+    DeviceTelemetryMessage:
+      name: DeviceTelemetryMessage
+      title: Device Telemetry Message
+      contentType: application/json
+      payload:
+        $ref: '#/components/schemas/DeviceTelemetry'
+
+  schemas:
+    DeviceTelemetry:
+      type: object
+      additionalProperties: false
+      properties:
+        deviceId:
+          type: number
+        measuredAt:
+          type: string
+          format: dd-MM-yyyy
+        value:
+          type: string
+        unit:
+          type: string

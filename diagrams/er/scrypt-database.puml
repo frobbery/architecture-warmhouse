@@ -13,6 +13,7 @@ entity "DeviceAction" {
   --
   action_id : NUMBER
   device_id : NUMBER
+  device_name : VARCHAR
 }
 
 entity "Schedule" {

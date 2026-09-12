@@ -6,14 +6,14 @@ top to bottom direction
 !include ../templates/C4_Component.puml
 
 Container_Boundary(WarmhouseSystem, "Warmhouse System") {
-  Container(UserService, "User Service", "Java, Spring", "Handles user authentication and authorization")
+  Container(UserService, "User Service", "Java, Spring", "Handles user authentication and registration")
   ContainerDb(UserDatabase, "User Database", "PostgreSQL", "Stores user registration data and hashed authentication credentials")
 }
 
 Container(UserService, "User Service", "Java, Spring") {
   Component(SignInController, "SignInController", "Component: Spring MVC Rest Controller", "Handles sign-in requests")
   Component(RegisterController, "RegisterController", "Component: Spring MVC Rest Controller", "Handles register requests")
-  Component(SecurityComponent, "Security Component", "Component: Spring Bean", "Provides functionality related to signing in and authenticating")
+  Component(SecurityComponent, "Security Component", "Component: Spring Bean", "Provides functionality related to signing in and registering")
   Component(UserRepository, "UserRepository", "Component: Spring Repository", "Data access logic")
 }
 

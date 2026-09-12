@@ -5,6 +5,86 @@ info:
   version: 1.0.0
 
 paths:
+  /sign-in:
+    post:
+      summary: Sign in with username/email and password
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SignInRequest'
+      responses:
+        '200':
+          description: Authentication successful
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserResponse'
+        '401':
+          description: Invalid credentials
+          content:
+            application/text:
+              schema:
+                type: string
+                description: Error message
+
+  /register:
+    post:
+      summary: Register a new user
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RegisterRequest'
+      responses:
+        '201':
+          description: User created successfully
+          content:
+            application/text:
+              schema:
+                type: string
+                description: Error message
+        '409':
+          description: Username or email already exists
+          content:
+            application/text:
+              schema:
+                type: string
+                description: Error message
+
 
 components:
   schemas:
+    SignInRequest:
+      type: object
+      properties:
+        username:
+          type: string
+          nullable: true
+        email:
+          type: string
+          format: email
+          nullable: true
+        password:
+          type: string
+
+    RegisterRequest:
+      type: object
+      properties:
+        username:
+          type: string
+        email:
+          type: string
+          format: email
+        password:
+          type: string
+
+    UserResponse:
+      type: object
+      properties:
+        userId:
+          type: number
+        username:
+          type: string
+        email:
+          type: string

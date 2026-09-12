@@ -15,7 +15,7 @@ Container_Boundary(WarmhouseSystem, "Warmhouse System") {
 }
 
 Container(WebApp, "Web Application", "Java, Spring") {
-  Component(AuthController, "AuthController", "Component: Spring MVC Rest Controller", "Handles authentication and authorization requests")
+  Component(AuthController, "AuthController", "Component: Spring MVC Rest Controller", "Handles authentication and registration requests")
   Component(UserServiceClient, "UserServiceClient", "Component: Spring Bean", "Acts as facade for REST API calls for UserService")
   Component(DeviceController, "DeviceController", "Component: Spring MVC Rest Controller", "Handles device registration and device requests")
   Component(DeviceServiceClient, "DeviceServiceClient", "Component: Spring Bean", "Acts as facade for REST API calls for DeviceService")

@@ -1,0 +1,110 @@
+openapi: 3.0.3
+info:
+  title: device-service
+  description: device-service endpoints
+  version: 1.0.0
+
+paths:
+  /devices/{userId}:
+    get:
+      summary: Get available devices for users
+      parameters:
+        - in: path
+          name: userId
+          schema:
+            type: number
+          required: true
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DevicesResponse'
+        '400':
+          description: Invalid request
+          content:
+            application/text:
+              schema:
+                type: string
+                description: Error message
+    post:
+      summary: Registers device for user
+      parameters:
+        - in: path
+          name: userId
+          schema:
+            type: number
+          required: true
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DeviceDto'
+      responses:
+        '200':
+          description: Successful operation
+        '400':
+          description: Invalid request
+          content:
+            application/text:
+              schema:
+                type: string
+                description: Error message
+        '405':
+          description: Device with this id already exists
+          content:
+            application/text:
+              schema:
+                type: string
+                description: Error message
+        '503':
+          description: Device doesn't respond
+          content:
+            application/text:
+              schema:
+                type: string
+                description: Error message
+  /devices/{deviceId}:
+    delete:
+      summary: Deletes existing device
+      parameters:
+        - in: path
+          name: deviceId
+          schema:
+            type: number
+          required: true
+      responses:
+        '200':
+          description: Successful operation
+        '400':
+          description: Invalid request
+          content:
+            application/text:
+              schema:
+                type: string
+                description: Error message
+components:
+  schemas:
+    DevicesResponse:
+      type: array
+      items:
+        $ref: '#/components/schemas/DeviceDto'
+
+    DeviceDto:
+      type: object
+      properties:
+        id:
+          type: number
+        name:
+          type: string
+        type:
+          $ref: '#/components/schemas/DeviceType'
+
+    DeviceType:
+      type: string
+      enum:
+        - HEATING
+        - LIGHT
+        - DOOR
+        - CAMERA
