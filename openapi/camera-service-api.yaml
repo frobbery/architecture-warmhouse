@@ -1,0 +1,34 @@
+openapi: 3.0.3
+info:
+  title: camera-service
+  description: camera-service endpoints
+  version: 1.0.0
+
+paths:
+  /video/{cameraId}:
+    get:
+      summary: Stream real-time video from a camera
+      description: Returns video stream for the given camera as an
+        MJPEG multipart stream. Connection stays open and frames are
+        pushed as they become available.
+      parameters:
+        - name: cameraId
+          in: path
+          required: true
+          schema:
+            type: number
+      responses:
+        '200':
+          description: Live video stream
+          content:
+            multipart/x-mixed-replace; boundary=frame:
+              schema:
+                type: string
+                format: binary
+        '503':
+          description: Camera doesn't respond
+          content:
+            application/text:
+              schema:
+                type: string
+                description: Error message
