@@ -1,0 +1,42 @@
+@startuml
+
+entity "Action" {
+  * action_id : NUMBER
+  --
+  value: VARCHAR
+  device_type : VARCHAR
+  state_for_execution : VARCHAR
+}
+
+entity "DeviceAction" {
+  * device_action_id : UUID
+  --
+  action_id : NUMBER
+  device_id : NUMBER
+  device_name : VARCHAR
+}
+
+entity "Schedule" {
+  * scrypt_id : UUID
+  --
+  cron_expression : VARCHAR
+}
+
+entity "Scrypt" {
+  * scrypt_id : UUID
+  --
+  user_id : NUMBER
+  name : VARCHAR
+}
+
+entity "ScryptAction" {
+  * scrypt_id : UUID
+  * device_action_id : UUID
+}
+
+Action ||--o{ DeviceAction
+Schedule |o--|| Scrypt
+ScryptAction }o--|| Scrypt
+ScryptAction }o--|| DeviceAction
+
+@enduml

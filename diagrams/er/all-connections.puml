@@ -1,0 +1,77 @@
+@startuml
+
+entity "User" {
+  * user_id : NUMBER
+  --
+  username : VARCHAR
+  email : VARCHAR
+  passwordhash : VARCHAR
+}
+
+entity "Device" {
+  * device_id : NUMBER
+  --
+  user_id : NUMBER
+  dtype : VARCHAR
+  name : VARCHAR
+}
+
+entity "TelemetryHistory" {
+  * telemetry_id : UUID
+  --
+  device_id : NUMBER
+  measured_at : DATE
+  value : VARCHAR
+  unit : VARCHAR
+}
+
+entity "TelemetrySchedule" {
+  * schedule_id : NUMBER
+  --
+  device_id : NUMBER
+  cronExpression : VARCHAR
+}
+
+entity "Action" {
+  * action_id : NUMBER
+  --
+  value: VARCHAR
+  device_type : VARCHAR
+  state_for_execution : VARCHAR
+}
+
+entity "DeviceAction" {
+  * device_action_id : UUID
+  --
+  action_id : NUMBER
+  device_id : NUMBER
+}
+
+entity "Schedule" {
+  * scrypt_id : UUID
+  --
+  cron_expression : VARCHAR
+}
+
+entity "Scrypt" {
+  * scrypt_id : UUID
+  --
+  user_id : NUMBER
+  name : VARCHAR
+}
+
+entity "ScryptAction" {
+  * scrypt_id : UUID
+  * device_action_id : UUID
+}
+
+User ||--o{ Device
+TelemetryHistory }o--|| Device
+Device ||--o| TelemetrySchedule
+User ||--o{ Scrypt
+Action ||--o{ DeviceAction
+Schedule |o--|| Scrypt
+ScryptAction }o--|| Scrypt
+ScryptAction }o--|| DeviceAction
+
+@enduml

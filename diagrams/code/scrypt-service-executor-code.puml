@@ -1,0 +1,79 @@
+@startuml
+
+set namespaceSeparator none
+
+title Code View: Srypt Service - ScryptExecutorService
+
+package "com.warmhouse" {
+
+    interface ScryptExecutorService {
+        + void scheduleScrypt(UUID scryptId, String cronExpression)
+    }
+
+    class ScryptExecutorServiceImpl {
+    }
+
+    interface ScryptRepository {
+        + Scrypt findScrypt(UUID scryptId)
+    }
+
+    class ScryptNotFoundException {
+    }
+
+    class ScheduleExistsException {
+    }
+
+    class Scrypt {
+        # UUID scryptId
+        # String name
+        # ScryptedAction[] actions
+        # Schedule schedule
+    }
+
+    class ScryptedAction {
+        # UUID deviceId
+        # Action action
+    }
+
+    class Action {
+        # UUID actionId
+        # String deviceType
+        # String action
+    }
+
+    class Schedule {
+       # UUID scheduleId
+       # String cronExpression
+    }
+
+    interface ScryptExecutorService {
+       + void scheduleScrypt(UUID scryptId)
+    }
+
+    class ActionSchedulerService {
+        - void scheduleActionForDevice(UUID deviceId, String action, UUID scheduleId)
+        - void unscheduleAction(UUID deviceId, UUID scheduleId)
+    }
+
+    class SchedulingFailedException {
+    }
+
+    ScryptExecutorService <|.. ScryptExecutorServiceImpl
+
+    Scrypt *-- ScryptedAction : contains
+    Scrypt *-- Schedule : contains
+    ScryptedAction *-- Action : contains
+
+    ScryptRepository ..> Scrypt : finds
+    ScryptExecutorServiceImpl ..> ScryptRepository : search scrypt by id
+    ScryptExecutorServiceImpl ..> ScryptRepository : saves schedule for scrypt
+    ScryptExecutorServiceImpl ..> ActionSchedulerService : schedules every action of scrypt
+
+
+    ScryptExecutorServiceImpl ..> ScryptNotFoundException : throws
+    ScryptExecutorServiceImpl ..> ScheduleExistsException : throws
+    ActionSchedulerService ..> SchedulingFailedException : throws
+
+}
+
+@enduml

@@ -1,0 +1,45 @@
+@startuml
+!include ../templates/C4_Container.puml
+
+title FitLife Container Diagram
+
+top to bottom direction
+
+Person(user, "User", "A user of the warmhoused system")
+
+Container_Boundary(WarmhouseSystem, "Warmhouse System") {
+  Container(MobileApp, "Mobile Application", "Kotlin, Swift", "Acts as frontend for user")
+  Container(WebApp, "Web Application", "Java, Spring", "Handles mobile app calls")
+  Container(UserService, "User service", "Java, Spring", "Registers and authenticates users")
+  ContainerDb(UserDatabase, "User Database", "PostgreSQL", "Stores users data")
+  Container(DeviceService, "Device service", "Java, Spring", "Registers devices")
+  ContainerDb(DeviceDatabase, "Device Database", "PostgreSQL", "Stores device info")
+  Container(TelemetryService, "Telemetry service", "Java, Spring", "Handles telemetry info from devices")
+  ContainerDb(TelemetryDatabase, "Telemetry Database", "PostgreSQL", "Stores telemetry data and schedules")
+  Container(ScriptService, "Script service", "Java, Spring", "Calls device actions, creates scripts that can be called/scheduled")
+  ContainerDb(ScriptDatabase, "Script Database", "PostgreSQL", "Stores scripts and schedules data")
+  Container(CameraService, "Camera service", "Java, Spring", "Gets videos from camera devices in realtime")
+  Container(Kafka, "Kafka", "Message Broker", "Buffers and distributes telemetry events")
+}
+
+System_Ext(cameraApi, "Camera API", "External API for camera devices")
+System_Ext(deviceApi, "Device API", "External API for other devices")
+
+Rel(user, MobileApp, "Uses the app")
+Rel(MobileApp, WebApp, "Forwards user requests", "JSON/HTTPS")
+Rel(WebApp, UserService, "Registers and authenticates users", "JSON/HTTPS")
+Rel(UserService, UserDatabase, "Reads/Writes user data", "SQL/TCP")
+Rel(WebApp, DeviceService, "Registers and reads devices of user", "JSON/HTTPS")
+Rel(DeviceService, DeviceDatabase, "Reads/Writes device data", "SQL/TCP")
+Rel(WebApp, TelemetryService, "Views telemetry history and schedules measuring", "JSON/HTTPS")
+Rel(TelemetryService, TelemetryDatabase, "Reads/Writes telemetry and schedule data", "SQL/TCP")
+Rel(deviceApi, Kafka, "Publishes telemetry data to", "JSON")
+Rel(Kafka, TelemetryService, "Sends telemetry data to", "JSON")
+Rel(TelemetryService, deviceApi, "Reads telemetry of device in real time", "JSON/HTTPS")
+Rel(WebApp, ScriptService, "Forwards device actions and creates scripts", "JSON/HTTPS")
+Rel(ScriptService, deviceApi, "Calls and schedules actions", "JSON/HTTPS")
+Rel(ScriptService, ScriptDatabase, "Reads/Writes script and action data", "SQL/TCP")
+Rel(WebApp, CameraService, "Requests сamera videos", "JSON/HTTPS")
+Rel(CameraService, cameraApi, "Requests сamera videos", "JSON/HTTPS")
+
+@enduml

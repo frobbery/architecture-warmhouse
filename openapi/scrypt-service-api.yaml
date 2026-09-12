@@ -1,0 +1,292 @@
+openapi: 3.0.3
+info:
+  title: scrypt-service
+  description: scrypt-service endpoints
+  version: 1.0.0
+
+paths:
+  /actions/{deviceType}/available:
+    get:
+      summary: Get available actions for device
+      parameters:
+        - in: path
+          name: deviceType
+          schema:
+            type: string
+          required: true
+        - in: query
+          name: filter
+          description: if actions should be filtered by current device state
+          schema:
+            type: boolean
+          required: false
+        - in: query
+          name: deviceId
+          schema:
+            type: number
+          required: false
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ActionsResponse'
+        '400':
+          description: Invalid request
+          content:
+            application/text:
+              schema:
+                type: string
+                description: Error message
+
+  /actions:
+    post:
+      summary: Perform action for device
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PerformActionRequest'
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  performed:
+                    type: boolean
+                    description: If action was called or not
+
+  /scrypts:
+    post:
+      summary: Creates new scrypt for user
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateScryptRequest'
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  scryptId:
+                    type: string
+                    format: UUID
+                    description: Id of created scrypt
+    get:
+      summary: Get scrypts of user
+      parameters:
+        - in: query
+          name: userId
+          schema:
+            type: number
+          required: true
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ScryptResponse'
+        '400':
+          description: Invalid request
+          content:
+            application/text:
+              schema:
+                type: string
+                description: Error message
+
+  /scrypts/{scryptId}:
+    post:
+      parameters:
+        - in: path
+          name: scryptId
+          schema:
+            type: string
+            format: UUID
+          required: true
+      summary: Adds actions to existing scrypt
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AddScryptActionRequest'
+      responses:
+        '200':
+          description: Successful operation
+        '400':
+          description: Invalid request
+          content:
+            application/text:
+              schema:
+                type: string
+                description: Error message
+    delete:
+      summary: Deletes existing scrypt
+      parameters:
+        - in: path
+          name: scryptId
+          schema:
+            type: string
+            format: UUID
+          required: true
+      responses:
+        '200':
+          description: Successful operation
+        '400':
+          description: Invalid request
+          content:
+            application/text:
+              schema:
+                type: string
+                description: Error message
+
+  /scrypts/{scryptId}/execute:
+    get:
+      summary: Executes scrypt single time
+      parameters:
+        - in: path
+          name: scryptId
+          schema:
+            type: string
+            format: UUID
+          required: true
+      responses:
+        '200':
+          description: All actions in scrypt were executed successfully
+        '422':
+          description: Some actions of script failed
+          content:
+            application/text:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/DeviceActionDto'
+                description: List of failed actions
+    post:
+      summary: Creates schedule for scrypt
+      parameters:
+        - in: path
+          name: scryptId
+          schema:
+            type: string
+            format: UUID
+          required: true
+        - in: query
+          name: schedule
+          schema:
+            type: string
+          required: true
+          description: cron expression for schedule
+      responses:
+        '200':
+          description: Successful operation
+        '400':
+          description: Invalid request
+          content:
+            application/text:
+              schema:
+                type: string
+                description: Error message
+        '405':
+          description: Schedule for this scrypt already exists
+          content:
+            application/text:
+              schema:
+                type: string
+                description: Error message
+    delete:
+      summary: Deletes existing scrypt schedule
+      parameters:
+        - in: path
+          name: scryptId
+          schema:
+            type: string
+            format: UUID
+          required: true
+      responses:
+        '200':
+          description: Successful operation
+        '400':
+          description: Invalid request
+          content:
+            application/text:
+              schema:
+                type: string
+                description: Error message
+
+components:
+  schemas:
+    Action:
+      type: string
+      enum:
+        - LIGHTS_ON
+        - LIGHTS_OFF
+        - LOCK_DOORS
+        - UNLOCK_DOORS
+        - HEATING_ON
+        - HEATING_OF
+        -
+    ActionsResponse:
+      type: array
+      items:
+        $ref: '#/components/schemas/Action'
+
+    PerformActionRequest:
+      type: object
+      properties:
+        deviceId:
+          type: number
+        action:
+          $ref: '#/components/schemas/Action'
+
+    CreateScryptRequest:
+      type: object
+      properties:
+        name:
+          type: string
+        userId:
+          type: number
+
+    AddScryptActionRequest:
+      type: array
+      items:
+        $ref: '#/components/schemas/DeviceActionDto'
+
+    ScryptResponse:
+      type: array
+      items:
+        $ref: '#/components/schemas/ScryptDto'
+
+    ScryptDto:
+      type: object
+      properties:
+        scryptId:
+          type: string
+          format: UUID
+        name:
+          type: string
+        actions:
+          type: array
+          items:
+            $ref: '#/components/schemas/DeviceActionDto'
+        schedule:
+          type: string
+          nullable: true
+
+    DeviceActionDto:
+      type: object
+      properties:
+        deviceId:
+          type: number
+        deviceName:
+          type: string
+        action:
+          $ref: '#/components/schemas/Action'

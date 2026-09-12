@@ -1,0 +1,45 @@
+@startuml
+title Warmhouse Web Application Component Diagram
+
+top to bottom direction
+
+!include ../templates/C4_Component.puml
+
+Container_Boundary(WarmhouseSystem, "Warmhouse System") {
+  Container(ScryptService, "Scrypt Service", "Java, Spring", "Handles calling device actions and creating callable/scheduled scrypts")
+  ContainerDb(ScryptDatabase, "Scrypt Database", "PostgreSQL", "Stores device info")
+}
+
+Container(ScryptService, "Scrypt Service", "Java, Spring") {
+  Component(ActionController, "ActionController", "Component: Spring MVC Rest Controller", "Handles requests for viewing actions available for specific device and calling them")
+  Component(ScryptController, "ScryptController", "Component: Spring MVC Rest Controller", "Handles requests for creating, deleting, viewing and adding actions to scrypts")
+  Component(ScryptExecutionController, "ScryptExecutionController", "Component: Spring MVC Rest Controller", "Handles requests for calling and scheduling scrypts")
+  Component(AvailableActionService, "AvailableActionService", "Component: Spring Bean", "Checks actions available for certain device type, filters available actions by current device state")
+  Component(ActionService, "ActionService", "Component: Spring Bean", "Calls actions for specific device")
+  Component(ScryptServiceLayer, "ScryptService", "Component: Spring Bean", "Creates, deletes, fetches and add actions to scrypts")
+  Component(ScryptExecutorService, "ScryptExecutorService", "Component: Spring Bean", "Calls, schedules or removes scheduling specific scrypt on devices")
+  Component(ActionSchedulerService, "ActionSchedulerService", "Component: Spring Bean", "Schedules or removes scheduling action on devices")
+  Component(DeviceFacade, "DeviceFacade", "Component: Spring Bean", "A facade onto device API")
+  Component(ActionRepository, "ActionRepository", "Component: Spring Repository", "Action data access logic")
+  Component(ScryptRepository, "ScryptRepository", "Component: Spring Repository", "Scrypt data access logic")
+}
+
+System_Ext(deviceApi, "Device API", "External API for devices")
+
+Rel(ActionController,AvailableActionService,"Fetches available actions for device")
+Rel(AvailableActionService,DeviceFacade,"Fetches current state of device")
+Rel(AvailableActionService,ActionRepository,"Fetches actions available for certain device types")
+Rel(ActionRepository, ScryptDatabase, "Reads/Writes action data", "SQL/TCP")
+Rel(ActionController,ActionService,"Calls actions for specific device")
+Rel(ActionService,DeviceFacade,"Calls actions for specific device")
+Rel(DeviceFacade,deviceApi,"Calls REST API", "JSON/HTTPS")
+Rel(ScryptController,ScryptServiceLayer,"Creates, deletes and views scrypts")
+Rel(ScryptServiceLayer,ScryptRepository,"Saves, deletes, fetches and adds actions to scrypts")
+Rel(ScryptRepository, ScryptDatabase, "Reads/Writes scrypt data", "SQL/TCP")
+Rel(ScryptExecutionController,ScryptExecutorService,"Schedules or removes scheduling action on devices")
+Rel(ScryptExecutorService,ActionService,"Calls actions of scrypt on devices on devices sequentially")
+Rel(ScryptExecutorService,ScryptRepository,"Finds scrypt to execute and saves/deletes schedule of scrypt")
+Rel(ScryptExecutorService,ActionSchedulerService,"Schedules or removes scheduling of actions of scrypt sequentially")
+Rel(ActionSchedulerService,DeviceFacade,"Schedules or removes scheduling of actions on specific device")
+
+@enduml

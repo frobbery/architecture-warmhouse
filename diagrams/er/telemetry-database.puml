@@ -1,0 +1,19 @@
+@startuml
+
+entity "TelemetryHistory" {
+  * telemetry_id : UUID
+  --
+  device_id : NUMBER
+  measured_at : DATE
+  value : VARCHAR
+  unit : VARCHAR
+}
+
+entity "TelemetrySchedule" {
+  * schedule_id : NUMBER
+  --
+  device_id : NUMBER
+  cronExpression : VARCHAR
+}
+
+@enduml

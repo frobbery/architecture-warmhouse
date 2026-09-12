@@ -1,0 +1,28 @@
+@startuml
+title Warmhouse Web Application Component Diagram
+
+top to bottom direction
+
+!include ../templates/C4_Component.puml
+
+Container_Boundary(WarmhouseSystem, "Warmhouse System") {
+  Container(DeviceService, "Device Service", "Java, Spring", "Handles registering devices and viewing devices available for user")
+  ContainerDb(DeviceDatabase, "Device Database", "PostgreSQL", "Stores device info")
+}
+
+Container(DeviceService, "Device Service", "Java, Spring") {
+  Component(DeviceController, "DeviceInfoController", "Component: Spring MVC Rest Controller", "Handles requests for registering devices, deleting devices and fetching available devices for user")
+  Component(ServiceLayer, "DeviceService", "Component: Spring Bean", "Provides functionality for registering, deleting and viewing available devices")
+  Component(DeviceRepository, "DeviceRepository", "Component: Spring Repository", "Data access logic")
+  Component(DeviceFacade, "DeviceFacade", "Component: Spring Bean", "A facade onto device API")
+}
+
+System_Ext(deviceApi, "Device API", "External API for devices")
+
+Rel(DeviceController,ServiceLayer,"Uses")
+Rel(ServiceLayer, DeviceRepository, "Saves and fetches devices")
+Rel(ServiceLayer, DeviceFacade, "Checks device existing through ping")
+Rel(DeviceRepository, DeviceDatabase, "Reads/Writes data", "SQL/TCP")
+Rel(DeviceFacade,deviceApi,"Calls REST API", "JSON/HTTPS")
+
+@enduml
